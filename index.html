@@ -864,7 +864,7 @@
         </div>
     </div>
 
-    <!-- Spotify Background Music -->
+    <!-- Audio Players (Google Drive) -->
     <div class="spotify-bg" id="spotifyPlayer1"></div>
     <div class="spotify-bg" id="spotifyPlayer2"></div>
 
@@ -1079,15 +1079,17 @@
             <div class="timeline-item">
                 <div class="timeline-date">🏋️ 30 Novembre</div>
                 <div class="timeline-content">
-                    <strong>📍 Loria | Bassano 💘</strong><br>
-                    "Andiamo con calma"
+                    <strong>📍 Loria | Bassano 💘</strong>
                 </div>
             </div>
 
             <div class="timeline-item">
                 <div class="timeline-date">❤️ Dicembre → Oggi</div>
                 <div class="timeline-content">
-                    <img src="https://drive.google.com/uc?export=view&id=1VMYLx2C5Mi0Z91qRuz8rQ5jUQqkOK-zP" alt="Noi" class="timeline-image">
+                    <strong>"Andiamo con calma"</strong><br><br>
+                    <div class="embed-container">
+                        <iframe src="https://drive.google.com/file/d/1VMYLx2C5Mi0Z91qRuz8rQ5jUQqkOK-zP/preview" allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
 
@@ -1207,13 +1209,13 @@
             }
         }
 
-        // Spotify Music
-        function playSpotifyTrack(trackId, containerId) {
+        // Audio Player (Google Drive)
+        function playAudioTrack(fileId, containerId) {
             const container = document.getElementById(containerId);
-            container.innerHTML = `<iframe src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+            container.innerHTML = `<iframe src="https://drive.google.com/file/d/${fileId}/preview" width="1" height="1" allow="autoplay"></iframe>`;
         }
 
-        function stopSpotify(containerId) {
+        function stopAudio(containerId) {
             document.getElementById(containerId).innerHTML = '';
         }
 
@@ -1224,11 +1226,8 @@
             heart.innerHTML = '❤️';
             document.body.appendChild(heart);
 
-            // Start first Spotify track
-            playSpotifyTrack('1QMGYNbDtHIRzDMKugpg7t', 'spotifyPlayer1');
-
-            // Show XP bar
-            document.getElementById('xpBar').classList.add('show');
+            // Start first audio track
+            playAudioTrack('15Fp3bqkrRU5pptpbbh6G5weVSUPqSwdB', 'spotifyPlayer1');
 
             setTimeout(() => {
                 heart.remove();
@@ -1250,9 +1249,15 @@
                 nextSection.scrollIntoView({ behavior: 'smooth' });
             }, 100);
 
-            // Check if entering quiz
+            // Show XP bar only during quiz
             if (next === 'quiz') {
+                document.getElementById('xpBar').classList.add('show');
                 showAchievement('Inizia il Quiz!', '🎯');
+            }
+            
+            // Hide XP bar when leaving quiz
+            if (current === 'quiz') {
+                document.getElementById('xpBar').classList.remove('show');
             }
         }
 
@@ -1362,8 +1367,8 @@
             document.getElementById('audioSection').classList.add('show');
             document.querySelector('.accept-btn').style.display = 'none';
             
-            // Stop first Spotify track
-            stopSpotify('spotifyPlayer1');
+            // Stop first audio track
+            stopAudio('spotifyPlayer1');
             
             showAchievement('Contratto accettato!', '📜');
         }
@@ -1372,7 +1377,7 @@
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.target.id === 'dinner' && mutation.target.classList.contains('active')) {
-                    playSpotifyTrack('3JiiSo4yW8FYVnWNlvzEFO', 'spotifyPlayer2');
+                    playAudioTrack('1HDbTMcQn2-oL9ssAEmD-SSH0q5eD9aYX', 'spotifyPlayer2');
                 }
             });
         });
