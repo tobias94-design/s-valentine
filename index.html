@@ -1,289 +1,1393 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>San Valentino – Upgrade 1.0 ❤️</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Relationship v1.3 💝</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+        body {
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            background: #000;
+            color: #fff;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text y="20" font-size="20">❤️</text></svg>') 12 12, auto;
+        }
 
-<style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: 'Comic Neue', cursive;
-  background: radial-gradient(circle, #ffb6c1, #ff69b4);
-  color: #fff;
-  text-align: center;
-}
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
 
-section {
-  min-height: 100vh;
-  padding: 40px 20px;
-  display: none;
-  animation: fadeIn 1s ease;
-}
+        .section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-section.active { display: block; }
+        .section.hidden {
+            display: none;
+        }
 
-h1 { font-size: 2.4rem; }
-h2 { font-size: 1.3rem; opacity: .9; }
+        /* Hero Section */
+        #hero {
+            background: linear-gradient(135deg, #1a0033 0%, #330066 50%, #660033 100%);
+            position: relative;
+            overflow: hidden;
+        }
 
-button {
-  margin: 10px;
-  padding: 14px 20px;
-  border-radius: 30px;
-  border: none;
-  background: #222;
-  color: #fff;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: .3s;
-}
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(0deg, rgba(255,20,147,0.03) 0px, transparent 1px, transparent 2px, rgba(255,20,147,0.03) 3px),
+                repeating-linear-gradient(90deg, rgba(255,20,147,0.03) 0px, transparent 1px, transparent 2px, rgba(255,20,147,0.03) 3px);
+            animation: scan 8s linear infinite;
+        }
 
-button:hover { transform: scale(1.05); background:#000; }
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
 
-.heart {
-  font-size: 80px;
-  animation: beat 1s infinite;
-}
+        .pixel-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
 
-@keyframes beat {
-  0%,100%{ transform: scale(1);}
-  50%{ transform: scale(1.3);}
-}
+        .pixel-heart {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
+        }
 
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(20px);}
-  to { opacity:1; transform:translateY(0);}
-}
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
 
-/* FEATURE */
-.feature-box {
-  background: rgba(0,0,0,.3);
-  padding: 20px;
-  border-radius: 20px;
-  margin: 15px auto;
-  max-width: 500px;
-}
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff1493, #ff69b4, #ff1493);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255,20,147,0.5);
+            position: relative;
+            z-index: 1;
+        }
 
-/* QUIZ */
-.quiz {
-  font-family: 'Orbitron', sans-serif;
-  background: #050a30;
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 600px;
-  margin: auto;
-}
+        h2 {
+            font-family: 'VT323', monospace;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: #ff69b4;
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
 
-.quiz button {
-  width: 90%;
-  margin: 8px auto;
-  border: 2px solid #1e90ff;
-}
+        .btn-primary {
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(0.7rem, 2vw, 1rem);
+            padding: 1.5rem 3rem;
+            background: linear-gradient(45deg, #ff1493, #ff69b4);
+            border: 4px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(255,20,147,0.6), 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            animation: pulse 2s ease-in-out infinite;
+        }
 
-.correct {
-  background: #2ecc71 !important;
-  border-color: #2ecc71;
-}
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
 
-.popup {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
+        .btn-primary:hover {
+            transform: scale(1.1) !important;
+            box-shadow: 0 0 40px rgba(255,20,147,1), 0 15px 40px rgba(0,0,0,0.7);
+        }
 
-.popup div {
-  background: #fff;
-  color: #000;
-  padding: 30px;
-  border-radius: 20px;
-  font-size: 1.3rem;
-}
+        /* Beating Heart Animation */
+        .heart-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 15rem;
+            z-index: 9999;
+            animation: heartbeat 1.5s ease-in-out;
+            pointer-events: none;
+        }
 
-/* TIMELINE */
-.timeline {
-  max-width: 600px;
-  margin: auto;
-  text-align: left;
-}
+        @keyframes heartbeat {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
 
-.timeline div {
-  background: rgba(0,0,0,.3);
-  padding: 15px;
-  border-radius: 15px;
-  margin: 15px 0;
-}
+        /* Features Section */
+        #features {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+        }
 
-/* TERMS */
-.terms {
-  max-width: 600px;
-  margin: auto;
-  background: rgba(255,255,255,.2);
-  padding: 20px;
-  border-radius: 20px;
-}
-</style>
+        #features::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,20,147,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(255,105,180,0.1) 0%, transparent 50%);
+        }
+
+        .features-container {
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-box {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #ff1493;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(255,20,147,0.2);
+            animation: slideIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .feature-box:nth-child(1) { animation-delay: 0.2s; }
+        .feature-box:nth-child(2) { animation-delay: 0.4s; }
+        .feature-box:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .feature-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #ff69b4;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .feature-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-box li {
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            padding: 0.5rem 0;
+            color: #fff;
+        }
+
+        .feature-box li::before {
+            content: '▸ ';
+            color: #ff1493;
+            font-weight: bold;
+        }
+
+        /* Quiz Section */
+        #quiz {
+            background: #000;
+            position: relative;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0,100,255,0.1) 0%, transparent 50%),
+                repeating-linear-gradient(0deg, transparent 0px, rgba(255,255,255,0.03) 1px, transparent 2px);
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, #001f3f 0%, #003d7a 100%);
+            border: 3px solid #0074D9;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,116,217,0.4);
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+            animation: questionAppear 0.6s ease forwards;
+        }
+
+        @keyframes questionAppear {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .question-header {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .question-number {
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            color: #7FDBFF;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .answer-btn {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #001a33 0%, #003366 100%);
+            border: 3px solid #0074D9;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .answer-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .answer-btn:hover {
+            background: linear-gradient(135deg, #003366 0%, #0059b3 100%);
+            border-color: #39CCCC;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,116,217,0.6);
+        }
+
+        .answer-letter {
+            color: #FF851B;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #004d00 0%, #008000 100%) !important;
+            border-color: #2ECC40 !important;
+            animation: correctPulse 0.6s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(46,204,64,0.8); }
+        }
+
+        .answer-btn.wrong {
+            background: linear-gradient(135deg, #4d0000 0%, #800000 100%) !important;
+            border-color: #ff0000 !important;
+            animation: wrongShake 0.6s ease;
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .answer-btn .heart-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .answer-btn.correct .heart-icon {
+            opacity: 1;
+            animation: heartPop 0.6s ease;
+        }
+
+        @keyframes heartPop {
+            0% { transform: translateY(-50%) scale(0); }
+            50% { transform: translateY(-50%) scale(1.3); }
+            100% { transform: translateY(-50%) scale(1); }
+        }
+
+        .special-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #2ECC40;
+            background: rgba(0,0,0,0.9);
+            padding: 2rem 4rem;
+            border: 4px solid #2ECC40;
+            border-radius: 15px;
+            z-index: 9999;
+            animation: messageAppear 3s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes messageAppear {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        }
+
+        .quiz-result {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, #660033 0%, #ff1493 100%);
+            border-radius: 15px;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .quiz-result.show {
+            display: block;
+            animation: resultAppear 0.8s ease forwards;
+        }
+
+        @keyframes resultAppear {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-result h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        /* Timeline Section */
+        #timeline {
+            background: linear-gradient(135deg, #2c003e 0%, #4a0e4e 50%, #1a0033 100%);
+            position: relative;
+        }
+
+        .timeline-container {
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-item {
+            background: rgba(255,255,255,0.05);
+            border-left: 5px solid #ff1493;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(255,20,147,0.3);
+        }
+
+        .timeline-date {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff69b4;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-content {
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .chat-messages {
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            animation: chatSlide 0.4s ease;
+        }
+
+        @keyframes chatSlide {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .timeline-image {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 3px solid #ff1493;
+        }
+
+        /* Terms Section */
+        #terms {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            position: relative;
+        }
+
+        .terms-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 3px solid #ff1493;
+            border-radius: 15px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .terms-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #ff1493;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .terms-article {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            color: #fff;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(255,20,147,0.1);
+            border-left: 4px solid #ff69b4;
+            border-radius: 5px;
+        }
+
+        .terms-number {
+            color: #ff69b4;
+            font-weight: bold;
+        }
+
+        .accept-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            padding: 1.5rem 3rem;
+            background: linear-gradient(45deg, #2ECC40, #01FF70);
+            border: 4px solid #fff;
+            color: #000;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(46,204,64,0.6);
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto;
+            border-radius: 10px;
+        }
+
+        .accept-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(46,204,64,1);
+        }
+
+        .audio-section {
+            text-align: center;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .audio-section.show {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Dinner Section */
+        #dinner {
+            background: linear-gradient(135deg, #330033 0%, #660066 50%, #330033 100%);
+            position: relative;
+        }
+
+        .dinner-container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .embed-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 2rem auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(255,20,147,0.3);
+        }
+
+        .embed-container iframe {
+            width: 100%;
+            height: 480px;
+            border: none;
+            border-radius: 15px;
+        }
+
+        .whatsapp-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            padding: 1.5rem 3rem;
+            background: #25D366;
+            border: 4px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(37,211,102,0.6);
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(37,211,102,1);
+        }
+
+        /* Continue Button */
+        .continue-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            padding: 1.5rem 3rem;
+            background: linear-gradient(45deg, #0074D9, #7FDBFF);
+            border: 4px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(0,116,217,0.6);
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            border-radius: 10px;
+        }
+
+        .continue-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(0,116,217,1);
+        }
+
+        /* Cursor Hearts */
+        .cursor-heart {
+            position: fixed;
+            pointer-events: none;
+            font-size: 1.5rem;
+            animation: cursorHeartFloat 2s ease-out forwards;
+            z-index: 9998;
+        }
+
+        @keyframes cursorHeartFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(20deg);
+            }
+        }
+
+        /* XP Bar */
+        .xp-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(0,0,0,0.8);
+            border: 3px solid #ff1493;
+            border-radius: 20px;
+            padding: 1rem;
+            z-index: 9997;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+
+        .xp-container.show {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .xp-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: #ff69b4;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 25px;
+            background: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .xp-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff1493, #ff69b4, #ff1493);
+            background-size: 200% 100%;
+            animation: xpGlow 2s ease infinite;
+            transition: width 0.8s ease;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255,20,147,0.8);
+        }
+
+        @keyframes xpGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Achievement Notification */
+        .achievement {
+            position: fixed;
+            top: 100px;
+            right: -400px;
+            background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+            border: 4px solid #FFD700;
+            border-radius: 15px;
+            padding: 1.5rem 1.5rem 1.5rem 4rem;
+            min-width: 350px;
+            box-shadow: 0 10px 40px rgba(255,215,0,0.5);
+            z-index: 9996;
+            animation: achievementSlide 4s ease forwards;
+        }
+
+        @keyframes achievementSlide {
+            0% { right: -400px; }
+            15% { right: 20px; }
+            85% { right: 20px; }
+            100% { right: -400px; }
+        }
+
+        .achievement-header {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .achievement-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .achievement-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            animation: achievementBounce 0.6s ease;
+        }
+
+        @keyframes achievementBounce {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.2); }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 9995;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        /* Spotify Hidden Player */
+        .spotify-bg {
+            position: fixed;
+            bottom: -1000px;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #ff1493, #ff69b4);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #ff69b4, #ff1493);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.2rem; }
+            .btn-primary { font-size: 0.7rem; padding: 1rem 2rem; }
+            .answers-grid { grid-template-columns: 1fr; }
+            .feature-box { padding: 1.5rem; }
+            .terms-container { padding: 2rem; }
+            .question-text { font-size: 1.2rem; }
+            .achievement { min-width: 280px; font-size: 0.9rem; }
+            .xp-container { width: 95%; }
+            .embed-container iframe { height: 300px; }
+        }
+    </style>
 </head>
-
 <body>
+    <!-- XP Bar -->
+    <div class="xp-container" id="xpBar">
+        <div class="xp-label">LIVELLO AMORE</div>
+        <div class="xp-bar">
+            <div class="xp-fill" id="xpFill"></div>
+        </div>
+    </div>
 
-<!-- HERO -->
-<section id="s1" class="active">
-  <h1>Il miglior upgrade della mia vita: tu</h1>
-  <h2>Versione 1.0 – rilasciata il giorno in cui ci siamo conosciuti</h2>
-  <br>
-  <button onclick="goTo(2)">Inizia ora</button>
-</section>
+    <!-- Spotify Background Music -->
+    <div class="spotify-bg" id="spotifyPlayer1"></div>
+    <div class="spotify-bg" id="spotifyPlayer2"></div>
 
-<!-- HEART TRANSITION -->
-<section id="s2">
-  <div class="heart">❤️</div>
-  <p>Caricamento emozioni...</p>
-</section>
+    <!-- Hero Section -->
+    <section id="hero" class="section active">
+        <div class="pixel-hearts">
+            <div class="pixel-heart" style="left: 10%; top: 20%;">💕</div>
+            <div class="pixel-heart" style="left: 80%; top: 30%; animation-delay: 1s;">💖</div>
+            <div class="pixel-heart" style="left: 15%; top: 70%; animation-delay: 2s;">💝</div>
+            <div class="pixel-heart" style="left: 85%; top: 60%; animation-delay: 1.5s;">💗</div>
+        </div>
+        <h1>Il miglior upgrade della mia vita: tu</h1>
+        <h2>Versione 1.0 – rilasciata il giorno in cui ci siamo conosciuti</h2>
+        <button class="btn-primary" onclick="startGame()">Inizia ora</button>
+    </section>
 
-<!-- FEATURES -->
-<section id="s3">
-  <h1>Feature List</h1>
+    <!-- Features Section -->
+    <section id="features" class="section hidden">
+        <div class="features-container">
+            <h1>Feature List</h1>
+            <div class="feature-box">
+                <h3>✨ Perché sei speciale</h3>
+                <ul>
+                    <li>100% Energia</li>
+                    <li>La luce risplende nei tuoi occhi e nel tuo sorriso</li>
+                    <li>Fai km e ritagli sempre del tempo per me</li>
+                    <li>Mi sopporti di giorno e pure di notte</li>
+                </ul>
+            </div>
+            <div class="feature-box">
+                <h3>🐛 Bug noti</h3>
+                <ul>
+                    <li>Testardaggine occasionale</li>
+                    <li>Troppo bella per passare inosservata</li>
+                </ul>
+            </div>
+            <div class="feature-box">
+                <h3>📝 Changelog</h3>
+                <ul>
+                    <li>v1.2 – Quando litighiamo anche se è brutto cerchiamo di costruire le basi per stare bene e volerci più bene</li>
+                    <li>v1.3 – Machine learning - Stiamo imparando a conoscerci e capirci</li>
+                </ul>
+            </div>
+            <button class="continue-btn" onclick="nextSection('features', 'quiz')">Continua</button>
+        </div>
+    </section>
 
-  <div class="feature-box">
-    <h3>Perché sei speciale</h3>
-    <p>100% supporto emotivo<br>
-    Ride anche quando non faccio ridere<br>
-    Fa km solo per vedermi</p>
-  </div>
+    <!-- Quiz Section -->
+    <section id="quiz" class="section hidden">
+        <div class="quiz-container">
+            <h1 style="margin-bottom: 3rem;">Quanto mi conosci? 🎮</h1>
+            
+            <!-- Question 1 -->
+            <div class="question-card active" id="q1">
+                <div class="question-header">
+                    <div class="question-number">DOMANDA 1 di 5</div>
+                    <div class="question-text">Cosa mi piace più di te?</div>
+                </div>
+                <div class="answers-grid">
+                    <button class="answer-btn" onclick="answerQ1(this)">
+                        <span class="answer-letter">A:</span> Occhi
+                        <span class="heart-icon">❤️</span>
+                    </button>
+                    <button class="answer-btn" onclick="answerQ1(this)">
+                        <span class="answer-letter">B:</span> Sorriso
+                        <span class="heart-icon">❤️</span>
+                    </button>
+                    <button class="answer-btn" onclick="answerQ1(this)">
+                        <span class="answer-letter">C:</span> Bicipiti
+                        <span class="heart-icon">❤️</span>
+                    </button>
+                    <button class="answer-btn" onclick="answerQ1(this)">
+                        <span class="answer-letter">D:</span> Dorsali
+                        <span class="heart-icon">❤️</span>
+                    </button>
+                </div>
+            </div>
 
-  <div class="feature-box">
-    <h3>Bug noti</h3>
-    <p>Testardaggine occasionale<br>
-    Troppo bella per passare inosservata</p>
-  </div>
+            <!-- Question 2 -->
+            <div class="question-card" id="q2">
+                <div class="question-header">
+                    <div class="question-number">DOMANDA 2 di 5</div>
+                    <div class="question-text">Qual è il mio difetto migliore?</div>
+                </div>
+                <div class="answers-grid">
+                    <button class="answer-btn" onclick="answerQ2(this, 0)">
+                        <span class="answer-letter">A:</span> Testardo
+                    </button>
+                    <button class="answer-btn" onclick="answerQ2(this, 1)">
+                        <span class="answer-letter">B:</span> Voglio avere sempre ragione
+                    </button>
+                    <button class="answer-btn" onclick="answerQ2(this, 2)">
+                        <span class="answer-letter">C:</span> ADHD
+                    </button>
+                    <button class="answer-btn" onclick="answerQ2(this, 3)">
+                        <span class="answer-letter">D:</span> Tutti
+                    </button>
+                </div>
+            </div>
 
-  <div class="feature-box">
-    <h3>Changelog</h3>
-    <p>v1.2 – Abbiamo imparato a litigare meglio<br>
-    v1.3 – Più complicità, meno silenzi</p>
-  </div>
+            <!-- Question 3 -->
+            <div class="question-card" id="q3">
+                <div class="question-header">
+                    <div class="question-number">DOMANDA 3 di 5</div>
+                    <div class="question-text">Cosa penso quando ti guardo?</div>
+                </div>
+                <div class="answers-grid">
+                    <button class="answer-btn" onclick="answerQ3(this)">
+                        <span class="answer-letter">A:</span> Bella
+                        <span class="heart-icon">❤️</span>
+                    </button>
+                    <button class="answer-btn" onclick="answerQ3(this)">
+                        <span class="answer-letter">B:</span> Bellissima
+                        <span class="heart-icon">❤️</span>
+                    </button>
+                    <button class="answer-btn" onclick="answerQ3(this)">
+                        <span class="answer-letter">C:</span> Tigre
+                        <span class="heart-icon">❤️</span>
+                    </button>
+                    <button class="answer-btn" onclick="answerQ3(this)">
+                        <span class="answer-letter">D:</span> Atleta ibrido
+                        <span class="heart-icon">❤️</span>
+                    </button>
+                </div>
+            </div>
 
-  <button onclick="goTo(4)">Continua</button>
-</section>
+            <!-- Question 4 -->
+            <div class="question-card" id="q4">
+                <div class="question-header">
+                    <div class="question-number">DOMANDA 4 di 5</div>
+                    <div class="question-text">Perché mi alleno?</div>
+                </div>
+                <div class="answers-grid">
+                    <button class="answer-btn" onclick="answerQ4(this, false)">
+                        <span class="answer-letter">A:</span> Per diventare la migliore versione di me stesso
+                    </button>
+                    <button class="answer-btn" onclick="answerQ4(this, false)">
+                        <span class="answer-letter">B:</span> Per difenderti
+                    </button>
+                    <button class="answer-btn" onclick="answerQ4(this, true)">
+                        <span class="answer-letter">C:</span> Per difendermi da te
+                    </button>
+                    <button class="answer-btn" onclick="answerQ4(this, false)">
+                        <span class="answer-letter">D:</span> In realtà non mi alleno
+                    </button>
+                </div>
+            </div>
 
-<!-- QUIZ -->
-<section id="s4">
-  <h1>Quanto mi conosci?</h1>
+            <!-- Question 5 -->
+            <div class="question-card" id="q5">
+                <div class="question-header">
+                    <div class="question-number">DOMANDA 5 di 5</div>
+                    <div class="question-text">Cosa celebriamo il 14 febbraio?</div>
+                </div>
+                <div class="answers-grid">
+                    <button class="answer-btn" onclick="answerQ5(this, false)">
+                        <span class="answer-letter">A:</span> Natale
+                    </button>
+                    <button class="answer-btn" onclick="answerQ5(this, true)">
+                        <span class="answer-letter">B:</span> S. Valentino
+                    </button>
+                    <button class="answer-btn" onclick="answerQ5(this, false)">
+                        <span class="answer-letter">C:</span> Leg Day
+                    </button>
+                    <button class="answer-btn" onclick="answerQ5(this, false)">
+                        <span class="answer-letter">D:</span> Carnevalon De L'Alpon
+                    </button>
+                </div>
+            </div>
 
-  <div class="quiz" id="quiz"></div>
-</section>
+            <!-- Quiz Result -->
+            <div class="quiz-result" id="quizResult">
+                <h3>🏆 Risultato 🏆</h3>
+                <h2 style="color: #fff; font-size: 2rem; margin-top: 1rem;">Sei la persona che voglio scegliere ogni giorno ❤️</h2>
+                <button class="continue-btn" onclick="nextSection('quiz', 'timeline')">Continua</button>
+            </div>
+        </div>
+    </section>
 
-<!-- TIMELINE -->
-<section id="s5">
-<h1>Timeline</h1>
-<div class="timeline">
-<div><strong>21 Nov – Chat</strong><br>Ciao👋 Hai un viso stra familiare...</div>
-<div><strong>28 Nov</strong><br>Ok stiamo calmi 😍</div>
-<div><strong>30 Nov</strong><br>📍 Loria | Bassano 🏋️💘<br><em>"Andiamo con calma"</em></div>
-<div><strong>Dicembre → Oggi</strong><br>
-<iframe src="https://giphy.com/embed/pZGDZwmxOtEEo" width="100%" height="200" frameBorder="0"></iframe>
-</div>
-</div>
-<button onclick="goTo(6)">Continua</button>
-</section>
+    <!-- Timeline Section -->
+    <section id="timeline" class="section hidden">
+        <div class="timeline-container">
+            <h1 style="margin-bottom: 3rem;">La nostra storia 💝</h1>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">📅 21 Novembre</div>
+                <div class="timeline-content">
+                    <strong>Chat</strong>
+                    <div class="chat-messages">
+                        <div class="chat-message">👋 Ciao, Hai un viso stra familiare, ma ti alleni al Gymnasium a Soave?</div>
+                        <div class="chat-message">Sono sicuro di averti già vista😅</div>
+                        <div class="chat-message">Ciaoo Sí vengo al Gymnasium, un po' a Soave e un po' ad Arzignano infatti ti ho visto anch'io diverse volte🙈</div>
+                        <div class="chat-message">Ecco mi sembrava😂 ci vai alla cena domani?</div>
+                        <div class="chat-message">No vado venerdì prossimo a quella di arzi montecchio. Tu te le fai tutte?😂</div>
+                        <div class="chat-message">Tutte tutte no😂 però se non vado mi fanno sentire in colpa😂</div>
+                        <div class="chat-message">Vado stasera dopo cena a soave, poi a quella di Verona sabato prossimo. Per una volta che salto quella di Montecchio rischio pure di perdermi l'occasione di conoscerti 😄</div>
+                        <div class="chat-message">Tra l'altro ho visto che anche tu sei nel mondo marketing… allora doppia occasione persa 😂</div>
+                        <div class="chat-message">Sí in effetti tutte sono tantine ormai. Eh sí infatti sarebbe stata l'occasione perfetta e sí lavoro anch'io nel marketing. Sei ancora in tempo per cambiare idea e al massimo ci saranno altre occasioni dai!😌</div>
+                        <div class="chat-message">Dai allora vediamo se presentarmi davvero alla cena o mantenere un po' di suspense😂 Effetto sorpresa 😄</div>
+                        <div class="chat-message">Dai va bene, lasciamo un alone di mistero che fa sempre bene. Aspetto venerdì per vedere se sono stata abbastanza convincente 😌</div>
+                    </div>
+                </div>
+            </div>
 
-<!-- TERMS -->
-<section id="s6">
-<h1>Terms & Conditions ❤️</h1>
-<div class="terms">
-<p>Art. 1 – Tobia deve essere meno permaloso<br>
-Art. 2 – Comunicare meglio<br>
-Art. 7 – I km fatti l’uno per l’altra valgono doppio<br>
-Art. 9 – Le litigate non annullano l’amore<br>
-Art. 12 – Più attenzioni</p>
-</div>
+            <div class="timeline-item">
+                <div class="timeline-date">💕 28 Novembre</div>
+                <div class="timeline-content">
+                    <strong>Ok stiamo calmi😍</strong>
+                </div>
+            </div>
 
-<button onclick="showPopup()">Accetto</button>
-<br><br>
+            <div class="timeline-item">
+                <div class="timeline-date">🏋️ 30 Novembre</div>
+                <div class="timeline-content">
+                    <strong>📍 Loria | Bassano 💘</strong><br>
+                    "Andiamo con calma"
+                </div>
+            </div>
 
-<a href="https://wa.me/393487036807?text=Grazie%20per%20l'invito,%20accetto%20e%20non%20vedo%20l'ora!" target="_blank">
-<button>Accetta per confermare 💬</button>
-</a>
-</section>
+            <div class="timeline-item">
+                <div class="timeline-date">❤️ Dicembre → Oggi</div>
+                <div class="timeline-content">
+                    <img src="https://drive.google.com/uc?export=view&id=1VMYLx2C5Mi0Z91qRuz8rQ5jUQqkOK-zP" alt="Noi" class="timeline-image">
+                </div>
+            </div>
 
-<!-- POPUP -->
-<div class="popup" id="popup">
-  <div>Grazie per essere nella mia vita ❤️</div>
-</div>
+            <button class="continue-btn" onclick="nextSection('timeline', 'terms')">Continua</button>
+        </div>
+    </section>
 
-<script>
-let current = 0;
-const quizData = [
-{
-q: "Cosa mi piace più di te?",
-a: ["Occhi","Sorriso","Bicipiti","Dorsali"]
-},
-{
-q: "Qual è il mio difetto migliore?",
-a: ["Testardo","Voglio avere sempre ragione","ADHD","Tutti"]
-},
-{
-q: "Cosa penso quando ti guardo?",
-a: ["Bella","Bellissima","Tigre","Atleta ibrido"]
-},
-{
-q: "Perché mi alleno?",
-a: ["Per diventare la migliore versione di me stesso","Per difenderti","Per difendermi da te","In realtà non mi alleno"]
-},
-{
-q: "Cosa celebriamo il 14 febbraio?",
-a: ["Natale","S. Valentino","Leg Day","Carnevalon de l’Alpon"]
-}
-];
+    <!-- Terms & Conditions Section -->
+    <section id="terms" class="section hidden">
+        <div class="terms-container">
+            <h2 class="terms-title">Terms & Conditions della Relazione</h2>
+            <div class="terms-article">
+                <span class="terms-number">Art. 1</span> – Tobia deve essere meno permaloso
+            </div>
+            <div class="terms-article">
+                <span class="terms-number">Art. 2</span> – Comunicare meglio
+            </div>
+            <div class="terms-article">
+                <span class="terms-number">Art. 7</span> – I km fatti l'uno per l'altra valgono doppio
+            </div>
+            <div class="terms-article">
+                <span class="terms-number">Art. 9</span> – Le litigate non annullano l'amore
+            </div>
+            <div class="terms-article">
+                <span class="terms-number">Art. 12</span> – Più attenzioni
+            </div>
+            
+            <button class="accept-btn" onclick="acceptTerms()">👉 Accetto</button>
+            
+            <div class="audio-section" id="audioSection">
+                <h3 style="color: #ff69b4; margin-bottom: 1rem;">💕 Grazie per essere nella mia vita 💕</h3>
+                <p style="color: #fff; margin-bottom: 1rem;">Ascolta il messaggio che ho registrato per te:</p>
+                <div class="embed-container">
+                    <iframe src="https://drive.google.com/file/d/1ueREm1SVOZf5Yhf2WoGh7Llh8Jk2Tvii/preview" allowfullscreen></iframe>
+                </div>
+                <button class="continue-btn" style="margin-top: 2rem;" onclick="nextSection('terms', 'dinner')">Continua</button>
+            </div>
+        </div>
+    </section>
 
-function goTo(n){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  if(n===2){
-    document.getElementById("s2").classList.add("active");
-    setTimeout(()=>goTo(3),2000);
-  } else {
-    document.getElementById("s"+n).classList.add("active");
-  }
-  if(n===4) loadQuiz();
-}
+    <!-- Dinner Invitation Section -->
+    <section id="dinner" class="section hidden">
+        <div class="dinner-container">
+            <h1 style="margin-bottom: 2rem;">Invito Speciale 🍽️💝</h1>
+            <div class="embed-container">
+                <iframe src="https://drive.google.com/file/d/1vaft_I9gW8TiCSwbUmXZn2-J8xdJ1MC-/preview" allowfullscreen></iframe>
+            </div>
+            <a href="https://wa.me/393487036807?text=Grazie%20per%20l'invito%2C%20accetto%20e%20non%20vedo%20l'ora!" class="whatsapp-btn" target="_blank">
+                Accetta per confermare
+            </a>
+        </div>
+    </section>
 
-function loadQuiz(){
-  const q = quizData[current];
-  const quiz = document.getElementById("quiz");
-  quiz.innerHTML = `<h2>${q.q}</h2>`;
-  q.a.forEach(ans=>{
-    const b = document.createElement("button");
-    b.innerText = ans;
-    b.onclick = ()=>answer(b);
-    quiz.appendChild(b);
-  });
-}
+    <script>
+        let currentQuestion = 1;
+        let xpProgress = 0;
+        let achievementCount = 0;
 
-function answer(btn){
-  document.querySelectorAll(".quiz button").forEach(b=>{
-    b.classList.add("correct");
-    if(quizData[current].q.includes("difetto")) {
-      setTimeout(()=>alert("Nessuno 😌"),1000);
-    }
-  });
-  setTimeout(()=>{
-    current++;
-    if(current < quizData.length) loadQuiz();
-    else goTo(5);
-  },1500);
-}
+        // Cursor hearts
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.95) {
+                createCursorHeart(e.clientX, e.clientY);
+            }
+        });
 
-function showPopup(){
-  document.getElementById("popup").style.display="flex";
-}
-</script>
+        function createCursorHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.className = 'cursor-heart';
+            heart.innerHTML = ['❤️', '💕', '💖', '💝'][Math.floor(Math.random() * 4)];
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 2000);
+        }
 
+        // Confetti
+        function createConfetti() {
+            const colors = ['#ff1493', '#ff69b4', '#FFD700', '#2ECC40', '#0074D9'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        // Achievement
+        function showAchievement(title, icon) {
+            const achievement = document.createElement('div');
+            achievement.className = 'achievement';
+            achievement.innerHTML = `
+                <div class="achievement-icon">${icon}</div>
+                <div class="achievement-header">Achievement Unlocked!</div>
+                <div class="achievement-title">${title}</div>
+            `;
+            document.body.appendChild(achievement);
+            setTimeout(() => achievement.remove(), 4000);
+        }
+
+        // XP System
+        function updateXP(amount) {
+            xpProgress += amount;
+            if (xpProgress > 100) xpProgress = 100;
+            document.getElementById('xpFill').style.width = xpProgress + '%';
+        }
+
+        // Vibration (mobile)
+        function vibrate() {
+            if (navigator.vibrate) {
+                navigator.vibrate(200);
+            }
+        }
+
+        // Spotify Music
+        function playSpotifyTrack(trackId, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<iframe src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+        }
+
+        function stopSpotify(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        function startGame() {
+            // Create beating heart animation
+            const heart = document.createElement('div');
+            heart.className = 'heart-animation';
+            heart.innerHTML = '❤️';
+            document.body.appendChild(heart);
+
+            // Start first Spotify track
+            playSpotifyTrack('1QMGYNbDtHIRzDMKugpg7t', 'spotifyPlayer1');
+
+            // Show XP bar
+            document.getElementById('xpBar').classList.add('show');
+
+            setTimeout(() => {
+                heart.remove();
+                nextSection('hero', 'features');
+                showAchievement('Benvenuta!', '🎮');
+            }, 1500);
+        }
+
+        function nextSection(current, next) {
+            const currentSection = document.getElementById(current);
+            const nextSection = document.getElementById(next);
+            
+            currentSection.classList.remove('active');
+            currentSection.classList.add('hidden');
+            
+            nextSection.classList.remove('hidden');
+            setTimeout(() => {
+                nextSection.classList.add('active');
+                nextSection.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+
+            // Check if entering quiz
+            if (next === 'quiz') {
+                showAchievement('Inizia il Quiz!', '🎯');
+            }
+        }
+
+        function answerQ1(btn) {
+            vibrate();
+            const buttons = document.querySelectorAll('#q1 .answer-btn');
+            buttons.forEach(b => {
+                b.classList.add('correct');
+                b.disabled = true;
+            });
+            
+            createConfetti();
+            updateXP(20);
+            showAchievement('Esperta di Tobia', '💝');
+
+            setTimeout(() => {
+                document.getElementById('q1').classList.remove('active');
+                document.getElementById('q2').classList.add('active');
+                currentQuestion = 2;
+            }, 1500);
+        }
+
+        function answerQ2(btn, index) {
+            vibrate();
+            const buttons = document.querySelectorAll('#q2 .answer-btn');
+            buttons.forEach(b => {
+                b.classList.add('wrong');
+                b.disabled = true;
+            });
+
+            // Show "NESSUNO" message
+            const message = document.createElement('div');
+            message.className = 'special-message';
+            message.textContent = 'NESSUNO';
+            document.body.appendChild(message);
+
+            updateXP(20);
+
+            setTimeout(() => {
+                message.remove();
+                document.getElementById('q2').classList.remove('active');
+                document.getElementById('q3').classList.add('active');
+                currentQuestion = 3;
+            }, 3000);
+        }
+
+        function answerQ3(btn) {
+            vibrate();
+            const buttons = document.querySelectorAll('#q3 .answer-btn');
+            buttons.forEach(b => {
+                b.classList.add('correct');
+                b.disabled = true;
+            });
+            
+            createConfetti();
+            updateXP(20);
+            showAchievement('Sei tutto! 💖', '👑');
+
+            setTimeout(() => {
+                document.getElementById('q3').classList.remove('active');
+                document.getElementById('q4').classList.add('active');
+                currentQuestion = 4;
+            }, 1500);
+        }
+
+        function answerQ4(btn, isCorrect) {
+            vibrate();
+            if (isCorrect) {
+                btn.classList.add('correct');
+                btn.disabled = true;
+                createConfetti();
+                updateXP(20);
+                
+                setTimeout(() => {
+                    document.getElementById('q4').classList.remove('active');
+                    document.getElementById('q5').classList.add('active');
+                    currentQuestion = 5;
+                }, 1000);
+            } else {
+                btn.style.opacity = '0.5';
+                btn.disabled = true;
+            }
+        }
+
+        function answerQ5(btn, isCorrect) {
+            vibrate();
+            if (isCorrect) {
+                btn.classList.add('correct');
+                btn.disabled = true;
+                createConfetti();
+                updateXP(20);
+                showAchievement('Queen of Hearts', '👸');
+                
+                setTimeout(() => {
+                    document.getElementById('q5').classList.remove('active');
+                    document.getElementById('quizResult').classList.add('show');
+                }, 1000);
+            } else {
+                btn.style.opacity = '0.5';
+                btn.disabled = true;
+            }
+        }
+
+        function acceptTerms() {
+            vibrate();
+            createConfetti();
+            document.getElementById('audioSection').classList.add('show');
+            document.querySelector('.accept-btn').style.display = 'none';
+            
+            // Stop first Spotify track
+            stopSpotify('spotifyPlayer1');
+            
+            showAchievement('Contratto accettato!', '📜');
+        }
+
+        // When entering dinner section, play second track
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.id === 'dinner' && mutation.target.classList.contains('active')) {
+                    playSpotifyTrack('3JiiSo4yW8FYVnWNlvzEFO', 'spotifyPlayer2');
+                }
+            });
+        });
+
+        const dinnerSection = document.getElementById('dinner');
+        if (dinnerSection) {
+            observer.observe(dinnerSection, { attributes: true, attributeFilter: ['class'] });
+        }
+
+        // Add floating hearts animation on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('hero').classList.add('active');
+            }, 100);
+        });
+    </script>
 </body>
 </html>
