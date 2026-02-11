@@ -1153,8 +1153,9 @@
                 <h3 style="color: #ff69b4; margin-bottom: 1rem;">💕 Grazie per essere nella mia vita 💕</h3>
                 <p style="color: #fff; margin-bottom: 1rem;">Ascolta il messaggio che ho registrato per te:</p>
                 <div style="text-align: center; margin: 2rem 0;">
-                    <audio id="voiceMessage" style="width: 100%; max-width: 500px; margin-bottom: 1rem;">
-                        <source src="https://drive.google.com/uc?export=download&id=1ueREm1SVOZf5Yhf2WoGh7Llh8Jk2Tvii" type="audio/mpeg">
+                    <audio id="voiceMessage" controls style="width: 100%; max-width: 500px; margin-bottom: 1rem;">
+                        <source src="https://docs.google.com/uc?export=download&id=1ueREm1SVOZf5Yhf2WoGh7Llh8Jk2Tvii" type="audio/mpeg">
+                        Il tuo browser non supporta l'elemento audio.
                     </audio>
                     <br>
                     <button onclick="playVoiceMessage()" class="audio-btn" id="playAudioBtn">
@@ -1245,39 +1246,55 @@
             }
         }
 
-        // Audio Player (Google Drive)
+        // Audio Player (Google Drive) - Using embed method
         let bgMusic1 = null;
         let bgMusic2 = null;
 
-        function playAudioTrack(fileId, containerId) {
-            const container = document.getElementById(containerId);
-            const audioElement = new Audio(`https://drive.google.com/uc?export=download&id=${fileId}`);
-            audioElement.loop = true;
-            audioElement.volume = 0.3;
-            audioElement.play().catch(e => {
-                console.log('Autoplay prevented, waiting for user interaction');
-                // Store for later playback on first user interaction
-                document.addEventListener('click', function playOnClick() {
-                    audioElement.play();
-                    document.removeEventListener('click', playOnClick);
-                }, { once: true });
-            });
+        function playAudioTrack(fileId, playerNum) {
+            // Create hidden audio element with Google Drive file
+            const audioDiv = document.createElement('div');
+            audioDiv.style.display = 'none';
+            audioDiv.innerHTML = `
+                <audio id="bgAudio${playerNum}" loop autoplay>
+                    <source src="https://docs.google.com/uc?export=download&id=${fileId}" type="audio/mpeg">
+                </audio>
+            `;
+            document.body.appendChild(audioDiv);
             
-            if (containerId === 'spotifyPlayer1') {
+            const audioElement = document.getElementById(`bgAudio${playerNum}`);
+            audioElement.volume = 0.3;
+            
+            // Try to play, handle autoplay restrictions
+            const playPromise = audioElement.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('Autoplay prevented, will play on first interaction');
+                    // Play on first user interaction
+                    const playOnInteraction = () => {
+                        audioElement.play();
+                        document.removeEventListener('click', playOnInteraction);
+                        document.removeEventListener('touchstart', playOnInteraction);
+                    };
+                    document.addEventListener('click', playOnInteraction, { once: true });
+                    document.addEventListener('touchstart', playOnInteraction, { once: true });
+                });
+            }
+            
+            if (playerNum === 1) {
                 bgMusic1 = audioElement;
             } else {
                 bgMusic2 = audioElement;
             }
         }
 
-        function stopAudio(containerId) {
-            if (containerId === 'spotifyPlayer1' && bgMusic1) {
-                bgMusic1.pause();
-                bgMusic1 = null;
-            } else if (containerId === 'spotifyPlayer2' && bgMusic2) {
-                bgMusic2.pause();
-                bgMusic2 = null;
+        function stopAudio(playerNum) {
+            const audio = document.getElementById(`bgAudio${playerNum}`);
+            if (audio) {
+                audio.pause();
+                audio.remove();
             }
+            if (playerNum === 1) bgMusic1 = null;
+            if (playerNum === 2) bgMusic2 = null;
         }
 
         // Voice message player
@@ -1286,8 +1303,12 @@
             const btn = document.getElementById('playAudioBtn');
             
             if (audio.paused) {
-                audio.play();
-                btn.textContent = '⏸️ Pausa';
+                audio.play().then(() => {
+                    btn.textContent = '⏸️ Pausa';
+                }).catch(e => {
+                    console.error('Error playing audio:', e);
+                    alert('Impossibile riprodurre l\'audio. Prova a ricaricare la pagina.');
+                });
             } else {
                 audio.pause();
                 btn.textContent = '🎧 Ascolta l\'audio';
@@ -1306,7 +1327,7 @@
             document.body.appendChild(heart);
 
             // Start first audio track
-            playAudioTrack('15Fp3bqkrRU5pptpbbh6G5weVSUPqSwdB', 'spotifyPlayer1');
+            playAudioTrack('15Fp3bqkrRU5pptpbbh6G5weVSUPqSwdB', 1);
 
             setTimeout(() => {
                 heart.remove();
@@ -1447,7 +1468,7 @@
             document.querySelector('.accept-btn').style.display = 'none';
             
             // Stop first audio track
-            stopAudio('spotifyPlayer1');
+            stopAudio(1);
             
             showAchievement('Contratto accettato!', '📜');
         }
@@ -1456,7 +1477,7 @@
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.target.id === 'dinner' && mutation.target.classList.contains('active')) {
-                    playAudioTrack('1HDbTMcQn2-oL9ssAEmD-SSH0q5eD9aYX', 'spotifyPlayer2');
+                    playAudioTrack('1HDbTMcQn2-oL9ssAEmD-SSH0q5eD9aYX', 2);
                 }
             });
         });
