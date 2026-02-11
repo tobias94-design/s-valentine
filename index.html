@@ -1151,16 +1151,12 @@
             
             <div class="audio-section" id="audioSection">
                 <h3 style="color: #ff69b4; margin-bottom: 1rem;">💕 Grazie per essere nella mia vita 💕</h3>
-                <p style="color: #fff; margin-bottom: 1rem;">Ascolta il messaggio che ho registrato per te:</p>
+                <p style="color: #fff; margin-bottom: 2rem;">Ascolta il messaggio che ho registrato per te:</p>
                 <div style="text-align: center; margin: 2rem 0;">
-                    <audio id="voiceMessage" controls style="width: 100%; max-width: 500px; margin-bottom: 1rem;">
+                    <audio id="voiceMessage" controls controlsList="nodownload" style="width: 100%; max-width: 500px;">
                         <source src="https://docs.google.com/uc?export=download&id=1ueREm1SVOZf5Yhf2WoGh7Llh8Jk2Tvii" type="audio/mpeg">
                         Il tuo browser non supporta l'elemento audio.
                     </audio>
-                    <br>
-                    <button onclick="playVoiceMessage()" class="audio-btn" id="playAudioBtn">
-                        🎧 Ascolta l'audio
-                    </button>
                 </div>
                 <button class="continue-btn" style="margin-top: 2rem;" onclick="nextSection('terms', 'dinner')">Continua</button>
             </div>
@@ -1246,38 +1242,72 @@
             }
         }
 
-        // Audio Player (Google Drive) - Using embed method
+        // Audio Player (Google Drive) - Improved version
         let bgMusic1 = null;
         let bgMusic2 = null;
 
         function playAudioTrack(fileId, playerNum) {
-            // Create hidden audio element with Google Drive file
-            const audioDiv = document.createElement('div');
-            audioDiv.style.display = 'none';
-            audioDiv.innerHTML = `
-                <audio id="bgAudio${playerNum}" loop autoplay>
-                    <source src="https://docs.google.com/uc?export=download&id=${fileId}" type="audio/mpeg">
-                </audio>
-            `;
-            document.body.appendChild(audioDiv);
+            console.log(`Attempting to play audio ${playerNum} with file ID: ${fileId}`);
             
-            const audioElement = document.getElementById(`bgAudio${playerNum}`);
+            // Create audio element
+            const audioElement = document.createElement('audio');
+            audioElement.id = `bgAudio${playerNum}`;
+            audioElement.loop = true;
             audioElement.volume = 0.3;
+            audioElement.preload = 'auto';
             
-            // Try to play, handle autoplay restrictions
+            // Try multiple URL formats
+            const urls = [
+                `https://docs.google.com/uc?export=download&id=${fileId}`,
+                `https://drive.google.com/uc?export=download&id=${fileId}`,
+                `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=AIzaSyDAPI`
+            ];
+            
+            // Add source
+            const source = document.createElement('source');
+            source.src = urls[0];
+            source.type = 'audio/mpeg';
+            audioElement.appendChild(source);
+            
+            // Add to DOM (hidden)
+            audioElement.style.display = 'none';
+            document.body.appendChild(audioElement);
+            
+            // Event listeners for debugging
+            audioElement.addEventListener('loadeddata', () => {
+                console.log(`Audio ${playerNum} loaded successfully`);
+            });
+            
+            audioElement.addEventListener('error', (e) => {
+                console.error(`Audio ${playerNum} error:`, e);
+                console.log('Trying alternative URL...');
+                source.src = urls[1];
+                audioElement.load();
+            });
+            
+            audioElement.addEventListener('canplay', () => {
+                console.log(`Audio ${playerNum} can play`);
+            });
+            
+            // Try to play
             const playPromise = audioElement.play();
             if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log('Autoplay prevented, will play on first interaction');
-                    // Play on first user interaction
-                    const playOnInteraction = () => {
-                        audioElement.play();
-                        document.removeEventListener('click', playOnInteraction);
-                        document.removeEventListener('touchstart', playOnInteraction);
-                    };
-                    document.addEventListener('click', playOnInteraction, { once: true });
-                    document.addEventListener('touchstart', playOnInteraction, { once: true });
-                });
+                playPromise
+                    .then(() => {
+                        console.log(`Audio ${playerNum} playing`);
+                    })
+                    .catch(error => {
+                        console.log(`Autoplay blocked for audio ${playerNum}:`, error);
+                        // Play on first user interaction
+                        const playOnInteraction = () => {
+                            console.log(`Playing audio ${playerNum} after user interaction`);
+                            audioElement.play()
+                                .then(() => console.log(`Audio ${playerNum} started after interaction`))
+                                .catch(e => console.error(`Failed to play audio ${playerNum}:`, e));
+                        };
+                        document.addEventListener('click', playOnInteraction, { once: true });
+                        document.addEventListener('touchstart', playOnInteraction, { once: true });
+                    });
             }
             
             if (playerNum === 1) {
@@ -1288,9 +1318,11 @@
         }
 
         function stopAudio(playerNum) {
+            console.log(`Stopping audio ${playerNum}`);
             const audio = document.getElementById(`bgAudio${playerNum}`);
             if (audio) {
                 audio.pause();
+                audio.currentTime = 0;
                 audio.remove();
             }
             if (playerNum === 1) bgMusic1 = null;
