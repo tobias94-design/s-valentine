@@ -586,6 +586,36 @@
             to { opacity: 1; }
         }
 
+        .audio-btn {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            padding: 1.5rem 3rem;
+            background: linear-gradient(45deg, #ff1493, #ff69b4);
+            border: 3px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255,20,147,0.6);
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255,20,147,1);
+        }
+
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+
+        audio {
+            border-radius: 10px;
+            filter: 
+                sepia(100%) 
+                saturate(500%) 
+                hue-rotate(290deg);
+        }
+
         /* Dinner Section */
         #dinner {
             background: linear-gradient(135deg, #330033 0%, #660066 50%, #330033 100%);
@@ -1122,8 +1152,14 @@
             <div class="audio-section" id="audioSection">
                 <h3 style="color: #ff69b4; margin-bottom: 1rem;">💕 Grazie per essere nella mia vita 💕</h3>
                 <p style="color: #fff; margin-bottom: 1rem;">Ascolta il messaggio che ho registrato per te:</p>
-                <div class="embed-container">
-                    <iframe src="https://drive.google.com/file/d/1ueREm1SVOZf5Yhf2WoGh7Llh8Jk2Tvii/preview" allowfullscreen></iframe>
+                <div style="text-align: center; margin: 2rem 0;">
+                    <audio id="voiceMessage" style="width: 100%; max-width: 500px; margin-bottom: 1rem;">
+                        <source src="https://drive.google.com/uc?export=download&id=1ueREm1SVOZf5Yhf2WoGh7Llh8Jk2Tvii" type="audio/mpeg">
+                    </audio>
+                    <br>
+                    <button onclick="playVoiceMessage()" class="audio-btn" id="playAudioBtn">
+                        🎧 Ascolta l'audio
+                    </button>
                 </div>
                 <button class="continue-btn" style="margin-top: 2rem;" onclick="nextSection('terms', 'dinner')">Continua</button>
             </div>
@@ -1210,13 +1246,56 @@
         }
 
         // Audio Player (Google Drive)
+        let bgMusic1 = null;
+        let bgMusic2 = null;
+
         function playAudioTrack(fileId, containerId) {
             const container = document.getElementById(containerId);
-            container.innerHTML = `<iframe src="https://drive.google.com/file/d/${fileId}/preview" width="1" height="1" allow="autoplay"></iframe>`;
+            const audioElement = new Audio(`https://drive.google.com/uc?export=download&id=${fileId}`);
+            audioElement.loop = true;
+            audioElement.volume = 0.3;
+            audioElement.play().catch(e => {
+                console.log('Autoplay prevented, waiting for user interaction');
+                // Store for later playback on first user interaction
+                document.addEventListener('click', function playOnClick() {
+                    audioElement.play();
+                    document.removeEventListener('click', playOnClick);
+                }, { once: true });
+            });
+            
+            if (containerId === 'spotifyPlayer1') {
+                bgMusic1 = audioElement;
+            } else {
+                bgMusic2 = audioElement;
+            }
         }
 
         function stopAudio(containerId) {
-            document.getElementById(containerId).innerHTML = '';
+            if (containerId === 'spotifyPlayer1' && bgMusic1) {
+                bgMusic1.pause();
+                bgMusic1 = null;
+            } else if (containerId === 'spotifyPlayer2' && bgMusic2) {
+                bgMusic2.pause();
+                bgMusic2 = null;
+            }
+        }
+
+        // Voice message player
+        function playVoiceMessage() {
+            const audio = document.getElementById('voiceMessage');
+            const btn = document.getElementById('playAudioBtn');
+            
+            if (audio.paused) {
+                audio.play();
+                btn.textContent = '⏸️ Pausa';
+            } else {
+                audio.pause();
+                btn.textContent = '🎧 Ascolta l\'audio';
+            }
+            
+            audio.onended = function() {
+                btn.textContent = '🎧 Ascolta l\'audio';
+            };
         }
 
         function startGame() {
