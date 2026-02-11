@@ -1154,7 +1154,7 @@
                 <p style="color: #fff; margin-bottom: 2rem;">Ascolta il messaggio che ho registrato per te:</p>
                 <div style="text-align: center; margin: 2rem 0;">
                     <audio id="voiceMessage" controls controlsList="nodownload" style="width: 100%; max-width: 500px;">
-                        <source src="https://docs.google.com/uc?export=download&id=1ueREm1SVOZf5Yhf2WoGh7Llh8Jk2Tvii" type="audio/mpeg">
+                        <source src="Nuova registrazione 8-ottimizzato-v2.wav" type="audio/wav">
                         Il tuo browser non supporta l'elemento audio.
                     </audio>
                 </div>
@@ -1242,68 +1242,56 @@
             }
         }
 
-        // Audio Player (Google Drive) - Improved version
+        // Audio Player - Using GitHub hosted files
         let bgMusic1 = null;
         let bgMusic2 = null;
 
-        function playAudioTrack(fileId, playerNum) {
-            console.log(`Attempting to play audio ${playerNum} with file ID: ${fileId}`);
+        function playAudioTrack(filename, playerNum) {
+            console.log(`Attempting to play audio ${playerNum}: ${filename}`);
             
-            // Create audio element
-            const audioElement = document.createElement('audio');
-            audioElement.id = `bgAudio${playerNum}`;
-            audioElement.loop = true;
-            audioElement.volume = 0.3;
-            audioElement.preload = 'auto';
+            // Create audio/video element (MP4 files)
+            const mediaElement = document.createElement(filename.endsWith('.mp4') ? 'video' : 'audio');
+            mediaElement.id = `bgAudio${playerNum}`;
+            mediaElement.loop = true;
+            mediaElement.volume = 0.2;
+            mediaElement.preload = 'auto';
+            mediaElement.style.display = 'none';
             
-            // Try multiple URL formats
-            const urls = [
-                `https://docs.google.com/uc?export=download&id=${fileId}`,
-                `https://drive.google.com/uc?export=download&id=${fileId}`,
-                `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=AIzaSyDAPI`
-            ];
+            // Set source - files are in the same directory as index.html
+            mediaElement.src = filename;
             
-            // Add source
-            const source = document.createElement('source');
-            source.src = urls[0];
-            source.type = 'audio/mpeg';
-            audioElement.appendChild(source);
+            // Add to DOM
+            document.body.appendChild(mediaElement);
             
-            // Add to DOM (hidden)
-            audioElement.style.display = 'none';
-            document.body.appendChild(audioElement);
-            
-            // Event listeners for debugging
-            audioElement.addEventListener('loadeddata', () => {
+            // Event listeners
+            mediaElement.addEventListener('loadeddata', () => {
                 console.log(`Audio ${playerNum} loaded successfully`);
             });
             
-            audioElement.addEventListener('error', (e) => {
+            mediaElement.addEventListener('error', (e) => {
                 console.error(`Audio ${playerNum} error:`, e);
-                console.log('Trying alternative URL...');
-                source.src = urls[1];
-                audioElement.load();
+                console.error('Make sure the file exists at:', window.location.origin + '/' + filename);
             });
             
-            audioElement.addEventListener('canplay', () => {
-                console.log(`Audio ${playerNum} can play`);
+            mediaElement.addEventListener('canplay', () => {
+                console.log(`Audio ${playerNum} ready to play`);
             });
             
             // Try to play
-            const playPromise = audioElement.play();
+            const playPromise = mediaElement.play();
             if (playPromise !== undefined) {
                 playPromise
                     .then(() => {
-                        console.log(`Audio ${playerNum} playing`);
+                        console.log(`Audio ${playerNum} is playing`);
                     })
                     .catch(error => {
-                        console.log(`Autoplay blocked for audio ${playerNum}:`, error);
+                        console.log(`Autoplay blocked for audio ${playerNum}. Will play on user interaction.`);
                         // Play on first user interaction
                         const playOnInteraction = () => {
                             console.log(`Playing audio ${playerNum} after user interaction`);
-                            audioElement.play()
-                                .then(() => console.log(`Audio ${playerNum} started after interaction`))
-                                .catch(e => console.error(`Failed to play audio ${playerNum}:`, e));
+                            mediaElement.play()
+                                .then(() => console.log(`Audio ${playerNum} started`))
+                                .catch(e => console.error(`Failed to play:`, e));
                         };
                         document.addEventListener('click', playOnInteraction, { once: true });
                         document.addEventListener('touchstart', playOnInteraction, { once: true });
@@ -1311,19 +1299,19 @@
             }
             
             if (playerNum === 1) {
-                bgMusic1 = audioElement;
+                bgMusic1 = mediaElement;
             } else {
-                bgMusic2 = audioElement;
+                bgMusic2 = mediaElement;
             }
         }
 
         function stopAudio(playerNum) {
             console.log(`Stopping audio ${playerNum}`);
-            const audio = document.getElementById(`bgAudio${playerNum}`);
-            if (audio) {
-                audio.pause();
-                audio.currentTime = 0;
-                audio.remove();
+            const media = document.getElementById(`bgAudio${playerNum}`);
+            if (media) {
+                media.pause();
+                media.currentTime = 0;
+                media.remove();
             }
             if (playerNum === 1) bgMusic1 = null;
             if (playerNum === 2) bgMusic2 = null;
@@ -1358,8 +1346,8 @@
             heart.innerHTML = '❤️';
             document.body.appendChild(heart);
 
-            // Start first audio track
-            playAudioTrack('15Fp3bqkrRU5pptpbbh6G5weVSUPqSwdB', 1);
+            // Start first audio track (Balorda nostalgia)
+            playAudioTrack('Olly_Juli_-_Balorda_nostalgia_Testo_Lyrics_Sanremo_2025_128KBPS.mp4', 1);
 
             setTimeout(() => {
                 heart.remove();
@@ -1505,11 +1493,11 @@
             showAchievement('Contratto accettato!', '📜');
         }
 
-        // When entering dinner section, play second track
+        // When entering dinner section, play second track (Amore Disperato)
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.target.id === 'dinner' && mutation.target.classList.contains('active')) {
-                    playAudioTrack('1HDbTMcQn2-oL9ssAEmD-SSH0q5eD9aYX', 2);
+                    playAudioTrack('Nada_-_Amore_Disperato_Lyric_Video_128KBPS.mp4', 2);
                 }
             });
         });
